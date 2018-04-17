@@ -48,7 +48,6 @@ def get_ref_fasta():
 	scripts_dir = os.path.dirname(os.path.realpath(__file__))
 	ref = '%s/refs/stx_genes_with_flanking_regions.fa' % scripts_dir
 	return ref
-	# insert test to check for correct blast, bwa indexes
 
 def run_MapSNP(fastq_read1, fastq_read2, output_root):
 	scripts_dir = get_scripts_dir()

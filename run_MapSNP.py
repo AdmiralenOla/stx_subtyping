@@ -12,7 +12,7 @@ from datetime import datetime
 
 def usage():
 	print '\nthis script maps specific reads against reference and parses output\n'
-	print 'Usage: <path/to/fastq_read1> <path/to/fastq_read2> <path/to/contigs.fa> <output_root>'
+	print 'Usage: <path/to/fastq_read1> <path/to/fastq_read2> <stx_genes_with_flanking_regions.fa>'
 	sys.exit()
 
 def get_opts():
@@ -26,28 +26,29 @@ def get_s_name(fastq_read1):
 	return s_name
 
 def make_output_dirs(output_root):
-	if not os.path.isdir('%s/tmp/bwa' % output_root):
-		system ('mkdir %s/tmp/bwa' % output_root)
+	if not os.path.isdir('%s/tmp/bowtie2' % output_root):
+		system ('mkdir %s/tmp/bowtie2' % output_root)
 	if not os.path.isdir('%s/results' % output_root):
 		system('mkdir %s/results' % output_root)
 
-	bwa_output_dir = '%s/tmp/bwa' % output_root
+	bowtie2_output_dir = '%s/tmp/bowtie2' % output_root
 	results_dir =  '%s/results' % output_root
-	return bwa_output_dir, results_dir
+	return bowtie2_output_dir, results_dir
 
-def map_to_stx(ref, fastq_read1, fastq_read2, bwa_output_dir, s_name):
-	print '######  Running bwa...' + str(datetime.time(datetime.now())).split('.')[0]
-	# check that is bwa isn't found, it returns a sensible error, when it is being run by shell script
-	system ('bwa mem %s %s %s > %s/%s.sam' % (ref, fastq_read1, fastq_read2, bwa_output_dir, s_name))
+def map_to_stx(ref, fastq_read1, fastq_read2, bowtie2_output_dir, s_name):
+	print '######  Running bowtie2...' + str(datetime.time(datetime.now())).split('.')[0]
+	# check that is bowtie2 isn't found, it returns a sensible error, when it is being run by shell script
+	#system ('bowtie2 mem %s %s %s > %s/%s.sam' % (ref, fastq_read1, fastq_read2, bowtie2_output_dir, s_name))
+	system ('bowtie2 --local -a -x %s -1 %s -2 %s -S %s/%s.sam' % (ref, fastq_read1, fastq_read2, bowtie2_output_dir, s_name))
 
-def sam_to_bam(bwa_output_dir, s_name):
+def sam_to_bam(bowtie2_output_dir, s_name):
 	print '######  Running sam_to_bam...' + str(datetime.time(datetime.now())).split('.')[0]
-	system('samtools view -h -F 4 -bS -o %s/%s.unique.bam %s/%s.sam' % (bwa_output_dir, s_name, bwa_output_dir, s_name))
-	system('samtools sort %s/%s.unique.bam %s/%s.unique.sorted' % (bwa_output_dir, s_name, bwa_output_dir, s_name))
-	system('samtools index %s/%s.unique.sorted.bam' % (bwa_output_dir, s_name))
-	if os.path.exists('%s/%s.unique.sorted.bam' % (bwa_output_dir, s_name)):
-		system('rm -rf %s/%s.sam' % (bwa_output_dir, s_name))
-		system('rm -rf %s/%s.unique.bam' % (bwa_output_dir, s_name))
+	system('samtools view -h -F 4 -bS -o %s/%s.unique.bam %s/%s.sam' % (bowtie2_output_dir, s_name, bowtie2_output_dir, s_name))
+	system('samtools sort %s/%s.unique.bam > %s/%s.unique.sorted.bam' % (bowtie2_output_dir, s_name, bowtie2_output_dir, s_name))
+	system('samtools index %s/%s.unique.sorted.bam' % (bowtie2_output_dir, s_name))
+	if os.path.exists('%s/%s.unique.sorted.bam' % (bowtie2_output_dir, s_name)):
+		system('rm -rf %s/%s.sam' % (bowtie2_output_dir, s_name))
+		system('rm -rf %s/%s.unique.bam' % (bowtie2_output_dir, s_name))
 
 def make_pile_up(bamfile, reference):
 	bamfile = pysam.Samfile(bamfile, "rb")
@@ -58,7 +59,12 @@ def make_pile_up(bamfile, reference):
 			#print pileupread
 			#print '\tbase in base %s = %s' % (pileupcolumn.pos, pileupread.alignment.seq[pileupread.qpos])
 			pos = pileupcolumn.pos
-			base = pileupread.alignment.seq[pileupread.qpos].split()
+			try:
+				base = pileupread.alignment.seq[pileupread.query_position].split()
+			except TypeError:
+				# This happens when a deletion is found relative to the reference
+				# pileupread.query_position is None, the read at that position is "-"
+				base = ["-"]
 			if pos in mapped_bases:
 				mapped_bases[pos].append(base[0])
 			else:
@@ -90,8 +96,8 @@ def parse_pileup(mapped_bases, reference):
 			#print each, mapped_bases[each]
 
 
-def run_pileup_analysis(bwa_output_dir, s_name, results_dir):
-	bamfile = '%s/%s.unique.sorted.bam' % (bwa_output_dir, s_name)
+def run_pileup_analysis(bowtie2_output_dir, s_name, results_dir):
+	bamfile = '%s/%s.unique.sorted.bam' % (bowtie2_output_dir, s_name)
 	references = ['stx2a_gi|14892|emb|X07865.1|' ,'stx2c_gi|15718404|dbj|AB071845.1|', 'stx2d_gi|30313370|gb|AY095209.1|', 'stx2b_gi|49089|emb|X65949.1|', 'stx2e_gi|8346567|emb|AJ249351.2|', 'stx2f_gi|254939478|dbj|AB472687.1|', 'stx2g_gi|30909079|gb|AY286000.1|', 'stx1a_gi|147832|gb|L04539.1|', 'stx1c_gi|535088|emb|Z36901.1|', 'stx1d_gi|28192582|gb|AY170851.1|']
 	#references = ['stx2a_gi|14892|emb|X07865.1|']
 	outhandle = open('%s/%s.MapSNP.txt' % (results_dir, s_name), 'w')
@@ -112,12 +118,12 @@ def run_pileup_analysis(bwa_output_dir, s_name, results_dir):
 
 fastq_read1, fastq_read2, output_root, ref = get_opts()
 s_name = get_s_name(fastq_read1)
-bwa_output_dir, results_dir = make_output_dirs(output_root)
+bowtie2_output_dir, results_dir = make_output_dirs(output_root)
 
-map_to_stx(ref, fastq_read1, fastq_read2, bwa_output_dir, s_name)
-sam_to_bam(bwa_output_dir, s_name)
+map_to_stx(ref, fastq_read1, fastq_read2, bowtie2_output_dir, s_name)
+sam_to_bam(bowtie2_output_dir, s_name)
 
-run_pileup_analysis(bwa_output_dir, s_name, results_dir)
+run_pileup_analysis(bowtie2_output_dir, s_name, results_dir)
 
 
 
