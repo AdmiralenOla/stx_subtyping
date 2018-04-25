@@ -1,25 +1,24 @@
 ### stx_subtyping: a tool for subtyping shiga toxin genes from fastqs or fastas.
 
+## NOTE: I have cloned this from https://github.com/flashton2003/stx_subtyping
+
 **Installation**
 
-git clone https://github.com/flashton2003/stx_subtyping
+pip install git+https://github.com/AdmiralenOla/stx_subtyping
 
 **Requirements**
 
 Tested with Biopython v1.6.3
 Test with pysam v0.6
-Tested with bwa v0.7.5
-Need to have bwa installed and available in your PATH (i.e. when you type `bwa` from any location, it runs bwa)
-
-Tested with python v2.7.6
-Tested with Mac OS X 10.9
+Bowtie2
+Need to have bowtie2 installed and available in your PATH (i.e. when you type `bowtie2` from any location, it runs bowtie2)
 
 **Useage**
 
-python /path/to/script/stx_subtyping.py -h
-python /path/to/script/stx_subtyping.py dual_stx_subtyping -h
+stx_subtyping -h
+stx_subtyping dual_stx_subtyping -h
 
-python /path/to/script/stx_subtyping.py dual_stx_subtyping /path/to/fastq1.fastq /path/to/fastq2.fastq /path/to/contigs.fa /path/to/whereyouwanttheoutput
+stx_subtyping dual_stx_subtyping /path/to/fastq1.fastq /path/to/fastq2.fastq /path/to/contigs.fa /path/to/whereyouwanttheoutput
 
 There are 3 running options. The best approach is dual_stx_subtyping, but if only fastqs or fastas are available, the other options can be used.
 
