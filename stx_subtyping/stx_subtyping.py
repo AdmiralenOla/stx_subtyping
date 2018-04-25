@@ -53,7 +53,9 @@ def run_AssBLAST(contigs, output_root):
 
 #################################### main ####################################
 
-if __name__ == '__main__':
+
+
+def main():
 	parser = argparse.ArgumentParser(prog='stx_subtyping')
 	parser.add_argument("-v", "--version", help="Installed stx_subtyping version", action="version",
                         version="%(prog)s " + str(__version__))
@@ -74,3 +76,7 @@ if __name__ == '__main__':
 	parser_mapsnp_only.add_argument('output_root', help = 'Directory into which you want the output')
 	args = parser.parse_args()
 	run_command(args)
+
+
+if __name__ == '__main__':
+	main()
