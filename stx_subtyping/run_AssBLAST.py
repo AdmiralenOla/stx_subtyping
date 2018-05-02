@@ -11,8 +11,8 @@ from datetime import datetime
 #################################### functions ####################################
 
 def usage():
-	print '\nthis script blasts assembled contigs against a reference and parses output\n'
-	print 'Usage: <path/to/contigs.fa> <output_root> <ref>'
+	print('\nthis script blasts assembled contigs against a reference and parses output\n')
+	print('Usage: <path/to/contigs.fa> <output_root> <ref>')
 	sys.exit()
 
 def get_opts():
@@ -36,12 +36,12 @@ def make_output_dirs(output_root):
 	return bwa_output_dir, results_dir
 
 def blast(query, database, out):
-	print '######  BLASTing...' + str(datetime.time(datetime.now())).split('.')[0]
+	print('######  BLASTing...' + str(datetime.time(datetime.now())).split('.')[0])
 	blastx_cline = NcbiblastxCommandline(cmd = 'blastn', query = query , db = database, evalue = 1e-20, outfmt = 5, out = out)
 	stdout, stderr = blastx_cline()
 
 def parse_blast_output(infile, results_dir):
-	print '######  Parsing BLAST results...' + str(datetime.time(datetime.now())).split('.')[0]
+	print('######  Parsing BLAST results...' + str(datetime.time(datetime.now())).split('.')[0])
 	blast_xml = open(infile, 'r')
 	blast_records = NCBIXML.parse(blast_xml)
 	s_name = (infile.split('/')[-1]).split('_')[0]
@@ -66,7 +66,7 @@ def parse_blast_output(infile, results_dir):
 			else:
 				results_dict[db_match] = hsp.positives
 			
-			#print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (s_name, record.query, len(hsp.match), hsp.positives, db_match, hsp.expect, hsp.query_start, hsp.query_end, hsp.sbjct_start, hsp.sbjct_end)
+			#print('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s') % (s_name, record.query, len(hsp.match), hsp.positives, db_match, hsp.expect, hsp.query_start, hsp.query_end, hsp.sbjct_start, hsp.sbjct_end)
 	
 	outhandle.write('%s\t' % s_name)
 	#print results_dict
@@ -76,7 +76,7 @@ def parse_blast_output(infile, results_dir):
 	#print sorted_results
 
 	for each in sorted_results:
-		print each[0], each[1]
+		print(each[0], each[1])
 		outhandle.write('%s:%s\t' % (each[0], each[1])) 
 	outhandle.write('\n')
 

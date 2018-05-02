@@ -11,8 +11,8 @@ from datetime import datetime
 
 
 def usage():
-	print '\nthis script maps specific reads against reference and parses output\n'
-	print 'Usage: <path/to/fastq_read1> <path/to/fastq_read2> <stx_genes_with_flanking_regions.fa>'
+	print('\nthis script maps specific reads against reference and parses output\n')
+	print('Usage: <path/to/fastq_read1> <path/to/fastq_read2> <stx_genes_with_flanking_regions.fa>')
 	sys.exit()
 
 def get_opts():
@@ -36,13 +36,13 @@ def make_output_dirs(output_root):
 	return bowtie2_output_dir, results_dir
 
 def map_to_stx(ref, fastq_read1, fastq_read2, bowtie2_output_dir, s_name):
-	print '######  Running bowtie2...' + str(datetime.time(datetime.now())).split('.')[0]
+	print('######  Running bowtie2...' + str(datetime.time(datetime.now())).split('.')[0])
 	# check that is bowtie2 isn't found, it returns a sensible error, when it is being run by shell script
 	#system ('bowtie2 mem %s %s %s > %s/%s.sam' % (ref, fastq_read1, fastq_read2, bowtie2_output_dir, s_name))
 	system ('bowtie2 --local -a -x %s -1 %s -2 %s -S %s/%s.sam' % (ref, fastq_read1, fastq_read2, bowtie2_output_dir, s_name))
 
 def sam_to_bam(bowtie2_output_dir, s_name):
-	print '######  Running sam_to_bam...' + str(datetime.time(datetime.now())).split('.')[0]
+	print('######  Running sam_to_bam...' + str(datetime.time(datetime.now())).split('.')[0])
 	system('samtools view -h -F 4 -bS -o %s/%s.unique.bam %s/%s.sam' % (bowtie2_output_dir, s_name, bowtie2_output_dir, s_name))
 	system('samtools sort %s/%s.unique.bam > %s/%s.unique.sorted.bam' % (bowtie2_output_dir, s_name, bowtie2_output_dir, s_name))
 	system('samtools index %s/%s.unique.sorted.bam' % (bowtie2_output_dir, s_name))

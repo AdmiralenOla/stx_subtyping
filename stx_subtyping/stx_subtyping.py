@@ -40,15 +40,15 @@ def get_ref_fasta():
 def run_MapSNP(fastq_read1, fastq_read2, output_root):
 	scripts_dir = get_scripts_dir()
 	ref = get_ref_fasta()
-	print '###  START:' + str(datetime.time(datetime.now())).split('.')[0]
-	print '###  Running MapSNP workflow...' + str(datetime.time(datetime.now())).split('.')[0]
+	print('###  START:' + str(datetime.time(datetime.now())).split('.')[0])
+	print('###  Running MapSNP workflow...' + str(datetime.time(datetime.now())).split('.')[0])
 	system ('python %s/run_MapSNP.py %s %s %s %s' % (scripts_dir, fastq_read1, fastq_read2, output_root, ref))
 	
 def run_AssBLAST(contigs, output_root):
 	scripts_dir = get_scripts_dir()
 	ref = get_ref_fasta()
-	print '### START:' + str(datetime.time(datetime.now())).split('.')[0]
-	print '###  Running AssBLAST workflow...' + str(datetime.time(datetime.now())).split('.')[0]
+	print('### START:' + str(datetime.time(datetime.now())).split('.')[0])
+	print('###  Running AssBLAST workflow...' + str(datetime.time(datetime.now())).split('.')[0])
 	system ('python %s/run_AssBLAST.py %s %s %s' % (scripts_dir, contigs, output_root, ref))
 
 #################################### main ####################################
