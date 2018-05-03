@@ -5,7 +5,7 @@ from os import system
 from datetime import datetime
 import argparse
 
-from __init__ import __version__
+from .__init__ import __version__
 
 #################################### functions ####################################
 
