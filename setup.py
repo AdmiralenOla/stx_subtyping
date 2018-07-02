@@ -26,7 +26,5 @@ setup(name='stx_subtyping',
         'pysam'],
     entry_points={
         'console_scripts': ['stx_subtyping=stx_subtyping.stx_subtyping:main']
-    },
-    package_data={'emm_typing': ['LICENSE', 'setup.py','data/*']},
-    include_package_data=True
+    }
 )
