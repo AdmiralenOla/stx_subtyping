@@ -26,5 +26,7 @@ setup(name='stx_subtyping',
         'pysam'],
     entry_points={
         'console_scripts': ['stx_subtyping=stx_subtyping.stx_subtyping:main']
-    }
+    },
+    package_data={'stx_subtyping': ['setup.py', 'stx_subtyping/refs/*']},
+    include_package_data=True
 )
