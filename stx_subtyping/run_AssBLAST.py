@@ -70,7 +70,7 @@ def parse_blast_output(infile, results_dir):
 	
 	outhandle.write('%s\t' % s_name)
 	#print results_dict
-	sorted_results = sorted(results_dict.iteritems(), key = operator.itemgetter(1))
+	sorted_results = sorted(list(results_dict.items()), key = operator.itemgetter(1))
 	#print sorted_results
 	sorted_results.reverse()
 	#print sorted_results
